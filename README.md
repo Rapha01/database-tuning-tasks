@@ -546,21 +546,26 @@ sible at the transaction level when using the Read Commited isolation level. Whe
 retrieve and store our value in two separate steps a race condition may occur. If two
 transactions read the current value of the companies bank account before updating it,
 one of the decrement operations will get lost, as they are applied to the same value.
+
 This can be represented in the following example:
 Thread 1:
 c = SELECT balance FROM Accounts WHERE account =0
 Hence, cT 1 is some x. And the read lock on the company tuple is released.
+
 Thread 2:
 c = SELECT balance FROM Accounts WHERE account =0
 Hence, cT 2 is the same x as for cT 1. And the read lock on the company tuple is released.
+
 Thread 1:
 UPDATE Accounts SET balance = c-1 WHERE account =0
 Hence, the company balance is cT 1 − 1 = x − 1 and the write lock on the company tuple
 is released since the transaction ends.
+
 Thread 2:
 UPDATE Accounts SET balance = c-1 WHERE account =0
 Hence, the company balance is cT 2 − 1 = x − 1 and the write lock on the company tuple
 is released since the transaction ends.
+
 So in the end, the company balance was only decremented once but should’ve been
 decremented twice. This whole effect increases, the more threads are used. Hence the
 correctness gets worse for more threads.
