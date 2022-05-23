@@ -1,0 +1,57 @@
+\subsubsection*{Efficient Approach 1: Reduce Overhead}
+
+\paragraph{Implementation}
+\subparagraph{Saving Transactions}
+    Instead of opening and closing a transaction for every insert, we commit only after every insert statement has been issued. For this we need to place the commit after, and not in, our insert loop.
+    \begin{lstlisting}[style=dbtsql]
+        [INSERT INTO auth (name, pubID) VALUES (%s, %s)]
+    \end{lstlisting}
+\subparagraph{Prepared Statements}
+    We create an SQL template statement, so the preparation (parsing and optimizing) for the query can be done once in foresight and will be saved for future use. For this we need to define the template using the PREPARE command. Similar to the definition of a function, we need to define parameter(types), semantics (the actual query) and give it a name to call it later. 
+    \begin{lstlisting}[style=dbtsql]
+        [PREPARE authInsert (varchar (49) , varchar (129)) 
+         AS INSERT INTO auth VALUES ($1 , $2)]
+    \end{lstlisting}
+        \begin{lstlisting}[style=dbtsql]
+        [EXECUTE authInsert (%s, %s)]
+    \end{lstlisting}
+\subparagraph{Multirow insert}
+    Instead of inserting one entry per query, we use the INSERT commands functionality to insert multiple rows in one command.
+    \begin{lstlisting}[style=dbtsql]
+        [PREPARE authInsert (varchar (49) , varchar (129)) 
+         AS INSERT INTO auth VALUES ($1 , $2), .. ,($19 , $20)]
+    \end{lstlisting}
+        \begin{lstlisting}[style=dbtsql]
+        [EXECUTE authInsert (%s, %s, ..)]
+    \end{lstlisting}
+
+\paragraph{Why is this approach efficient?}
+
+
+
+\subparagraph{}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|r}
+    Approach          & time \tabularnewline
+    \hline
+    Straigtforward & 100 \tabularnewline
+    Straigtforward + One transaction & 32\tabularnewline
+    Prepared Statements + One transaction & 27\tabularnewline
+    Prepared Statements + One transaction + Multi row insert & 5\tabularnewline
+  \end{tabular}
+\end{table}
+
+\subparagraph{Saving Transactions}
+
+\subparagraph{Prepared Statements}
+   
+\subparagraph{Multirow insert}
+
+
+
+\paragraph{Tuning principle}
+
+Which tuning principle did you apply? Pick the one that describes this approach best (``think globally, fix locally'' is too general).
+
+\youranswerhere{}
