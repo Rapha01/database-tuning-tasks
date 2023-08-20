@@ -1,4 +1,5 @@
 # database-tuning-tasks
+Explore different approaches to database tuning using multiple techniques for more efficient queries and database behavior. Focuses on bulk data writing, query tuning, index tuning, join tuning and concurrency tuning.
 
 ## A1: Bulk data writing
 
